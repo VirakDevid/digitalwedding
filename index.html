@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>សិរីសួស្តី អាពាហ៍ពិពាហ៍ - ខេមរៈ & រក្សា</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;700&family=Moul&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --bg-silk: #fffaf5;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: var(--bg-silk);
+            overflow: hidden;
+            color: #333;
+        }
+        
+        .moul-font { font-family: 'Moul', serif; }
+        .script-font { font-family: 'Pinyon Script', cursive; }
+
+        /* Luxury Door Overlay */
+        #welcome-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .door-left, .door-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('img/banner_muk.jpg') center/cover;
+            transition: transform 1.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        .door-left { left: 0; border-right: 3px solid var(--gold); }
+        .door-right { right: 0; border-left: 3px solid var(--gold); }
+
+        .opened .door-left { transform: translateX(-100%); }
+        .opened .door-right { transform: translateX(100%); }
+        .opened #welcome-overlay { pointer-events: none; opacity: 0; transition: opacity 1s 1s; }
+
+        .heart {
+            position: fixed;
+            color: #ff4d4d;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 50;
+            animation: heartMove 4s linear forwards;
+        }
+        @keyframes heartMove {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        .luxury-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--gold);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .gold-border-inner {
+            border: 1px solid var(--gold);
+            margin: 10px;
+            height: calc(100% - 20px);
+        }
+
+        /* Day Counter Widget */
+        .day-counter-circle {
+            width: 150px;
+            height: 150px;
+            border: 4px double var(--gold);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            margin: 20px auto;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .music-disk {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+        }
+        .music-disk.playing { animation-play-state: running; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .parallax-section {
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        .aba-glow {
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #005a8f; }
+            to { box-shadow: 0 0 20px #005a8f; }
+        }
+
+        /* Gallery Grid */
+        .gallery-img {
+            transition: transform 0.5s ease;
+            cursor: pointer;
+        }
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Audio Player -->
+    <audio id="wedding-music" loop>
+        <source src="img/sound.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Welcome Door Overlay -->
+    <div id="welcome-overlay">
+        <div class="door-left"></div>
+        <div class="door-right"></div>
+        <div class="relative z-10 text-center text-white p-8">
+            <p class="moul-font text-4xl mb-2 text-[#D4AF37] animate__animated animate__fadeInDown">សូមស្វាគមន៍មកកាន់ពិធីមង្គលការរបស់</p><br>
+            <h1 class="moul-font text-4xl md:text-6xl mb-8 animate__animated animate__zoomIn">ខេមរៈ & រក្សា</h1>
+            <button onclick="openInvitation()" class="bg-[#D4AF37] hover:bg-[#B8860B] text-white px-12 py-5 rounded-full text-xl moul-font transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)] animate__animated animate__pulse animate__infinite">
+                បើកពិធីមង្គលការ
+            </button>
+        </div>
+    </div>
+
+    <!-- Music Control -->
+    <div id="music-disk" class="music-disk" onclick="toggleMusic()">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content-area" class="opacity-0 transition-opacity duration-1000">
+        
+        <!-- 1. Hero Section -->
+        <section class="h-screen parallax-section flex items-center justify-center relative" style="background-image: url('img/banner_1.jpg');">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="relative z-10 text-center text-white p-6">
+                <p class="moul-font text-xl md:text-2xl mb-4 tracking-widest text-[#D4AF37]">សិរីសួស្តីជ័យមង្គល</p>
+                <h1 class="moul-font text-5xl md:text-8xl mb-6">ខេមរៈ & រក្សា</h1>
+                
+                <!-- Day Counter Widget -->
+                <div class="day-counter-circle">
+                    <span class="text-xs uppercase tracking-widest text-[#D4AF37]">នៅសល់</span>
+                    <span id="days-count" class="text-5xl font-bold">00</span>
+                    <span class="moul-font text-xs">ថ្ងៃទៀត</span>
+                </div>
+
+                <div class="flex justify-center items-center gap-4 mb-8">
+                    <div class="h-px w-12 bg-white"></div>
+                    <p class="moul-font text-4xl">ថ្ងៃអង្គារ ទី៧ ខែកក្កដា ឆ្នាំ ២០២៦</p>
+                    <div class="h-px w-12 bg-white"></div>
+                </div>
+                <p class="text-xl tracking-[5px] uppercase font-light text-center">ភូមិចុងព្រែក សង្កាត់ស្វាយរៀង ក្រុងស្វាយរៀង ខេត្ដស្វាយរៀង</p>
+            </div>
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                <svg class="w-10 h-10 text-white opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 14l-7 7-7-7"></path></svg>
+            </div>
+        </section>
+
+        <!-- 2. Intro Poem -->
+        <section class="py-24 px-6 text-center bg-[#fff] relative overflow-hidden">
+            <div class="max-w-3xl mx-auto reveal">
+                <p class="moul-font text-4xl text-[#B8860B] mb-6">សិរីសួស្តីជ័យមង្គល</p>
+                <p class="text-xl leading-relaxed italic text-gray-600">
+                    "នៅក្នុងសិរីមង្គលដ៏មហាសាល ក្បួនខ្នាតបុរាណខ្មែរ ចារឹកទុកនូវសេចក្តីសុខសួស្តី។<br>
+                    ថ្ងៃនេះជាថ្ងៃជ័យ ថ្ងៃសិរី ថ្ងៃដែលយើងខ្ញុំទាំងពីរនាក់ ចងដៃរួមវាសនា<br>
+                    ក្រោមកិច្ចដឹងឮពីចាស់ទុំ និងមិត្តភក្តិបងប្អូនទាំងអស់គ្នា។"
+                </p>
+            </div>
+        </section>
+
+       
+        <!-- 4. Full Invitation Card -->
+        <section class="max-w-5xl mx-auto py-10 px-6">
+            <div class="luxury-card p-2 rounded-[40px] reveal">
+                <div class="gold-border-inner rounded-[35px] p-8 md:p-16 flex flex-col items-center">
+                    <h2 class="moul-font text-3xl md:text-4xl text-[#B8860B] mb-12 section-title text-center">សិរីសួស្តីជ័យមង្គល</h2>
+                    
+                    <p class="text-lg md:text-2xl leading-loose text-center mb-12">
+                        យើងខ្ញុំមានកិត្តិយស និងសេចក្តីសោមនស្សរីករាយឥតឧបមា សូមគោរពអញ្ជើញ<br>
+                        <span class="font-bold text-2xl">សម្ដេច ទ្រង់ ឯកឧត្តម អ្នកឧកញ៉ា​ លោកឧកញ៉ា​  លោកជំទាវ លោកអ្នកស្រី លោកស្រី អ្នកនាង កញ្ញា</span><br>
+                        ចូលរួមជាអធិបតី និងភ្ញៀវកិត្តិយស ដើម្បីប្រសិទ្ធពរជ័យមង្គល ក្នុងពិធីរៀបអាពាហ៍ពិពាហ៍<br>
+                        កូនប្រុស កូនស្រី របស់យើងខ្ញុំ ដែលនឹងប្រព្រឹត្តទៅតាមកម្មវិធីលម្អិតដូចខាងក្រោម៖
+                    </p>
+
+                    <div class="grid md:grid-cols-2 gap-16 w-full max-w-4xl">
+                        <!-- Groom Side -->
+                        <div class="text-center space-y-4 reveal-left">
+                            <div class="bg-[#fdf8f0] p-6 rounded-2xl border border-[#eee]">
+                                <p class="moul-font text-lg text-[#B8860B] mb-2">មាតាបិតាខាងប្រុស</p>
+                                <p class="text-xl font-bold">ឯកឧត្តម ឡុង សុខុម </p>
+                                <p class="text-xl font-bold">និង លោកជំទាវ កើត សុវី</p>
+                                <div class="w-12 h-px bg-[#D4AF37] mx-auto my-4"></div>
+                                <p class="moul-font text-2xl text-gray-800">កូនប្រុស៖ ខុម ខេមរៈ</p>
+                            </div>
+                        </div>
+                        <!-- Bride Side -->
+                        <div class="text-center space-y-4 reveal-right">
+                            <div class="bg-[#fdf8f0] p-6 rounded-2xl border border-[#eee]">
+                                <p class="moul-font text-lg text-[#B8860B] mb-2">មាតាបិតាខាងស្រី</p>
+                                <p class="text-xl font-bold">លោក ម៉ៅ វីរៈ</p>
+                                <p class="text-xl font-bold">និង លោកស្រី រត្ន័ ចាន់លីណា</p>
+                                <div class="w-12 h-px bg-[#D4AF37] mx-auto my-4"></div>
+                                <p class="moul-font text-2xl text-gray-800">កូនស្រី៖ វីរៈ រក្សា</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Detailed Schedule -->
+        <section class="bg-white py-24 px-6 relative">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="moul-font text-3xl text-center mb-20 text-[#B8860B] section-title reveal">កម្មវិធីបុណ្យតាមបែបប្រពៃណី</h2>
+                
+                <div class="space-y-16">
+                    <!-- Morning Step 1 -->
+                    <div class="flex flex-col md:flex-row gap-10 items-start reveal">
+                        <div class="w-full md:w-1/3 text-center md:text-right">
+                            <p class="moul-font text-2xl text-[#D4AF37]">កម្មវិធីទី១</p>
+                            <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">ថ្ងៃចន្ទ៍ ទី០៦ ខែកក្កដា ឆ្នាំ២០២៦</p>
+                        </div>
+                        <div class="w-full md:w-2/3 border-l-2 border-[#D4AF37] pl-8 space-y-4">
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">១. ម៉ោង ០៨:០០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីសូត្រមន្តចំរើនព្រះបរិត្ត</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">២. ម៉ោង ០៥:០០ ល្ងាច</h3>
+                                <p class="text-gray-600">ពិធីជុំពេលា និងជាវខាន់ស្លា</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៣. ម៉ោង ០៦:៣០ ល្ងាច</h3>
+                                <p class="text-gray-600">អញ្ជើញភ្ញៀវកិត្តយសពិសាអាហារ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evening Step 2 -->
+                    <div class="flex flex-col md:flex-row gap-10 items-start reveal">
+                        <div class="w-full md:w-1/3 text-center md:text-right">
+                            <p class="moul-font text-2xl text-[#D4AF37]">កម្មវិធីទី២</p>
+                            <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">ថ្ងៃអង្គារ ទី០៧ ខែកក្កដា ឆ្នាំ២០២៦</p>
+                        </div>
+                        <div class="w-full md:w-2/3 border-l-2 border-[#D4AF37] pl-8 space-y-4">
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">១. ម៉ោង ០៦:៣០ ព្រឹក</h3>
+                                <p class="text-gray-600">ជួបជុំភ្ញៀវកិត្កិយសរៀបចំហែរជំនួន</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">២. ម៉ោង ០៧:០០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីហែរជំនួនកំណត់ចូលរោងជ័យ</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៣. ម៉ោង ០៧:៣០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីចៅមហានិយាយជើងការ សែនព្រេន រៀបរាប់ផ្លែឈើ និងពិសាភោជនាហារពេលព្រឹក</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៤. ម៉ោង ០៨:០០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីបំពាក់ជញ្ជៀន</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៥. ម៉ោង ០៩:០០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីកាត់សក់បង្កក់សិរី កូនប្រុស-កូនស្រី</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៦. ម៉ោង ១១:០០ ព្រឹក</h3>
+                                <p class="text-gray-600">ពិធីសំពះផ្ទឹមចងដៃ បង្វិលពពិល និងព្រះថោងតោងស្បៃ</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៧. ម៉ោង ១២:០០ ថ្ងៃត្រង់</h3>
+                                <p class="text-gray-600">អញ្ជើញភ្ញៀវកិត្ដិយសពិសារអាហារថ្ងៃត្រង់បញ្ចប់កិច្ចអាពាពិពាហ៍</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl text-gray-800">៨. ម៉ោង ៤:០០ ល្ងាច</h3>
+                                <p class="text-gray-600">អញ្ជើញភ្ញៀវកិត្ដិយសពិសារអាហារភោជនាហារ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+         <!-- 3. Photo Gallery Section (New) -->
+        <section class="py-24 px-6 bg-[#fffaf5]">
+            <div class="max-w-6xl mx-auto text-center mb-16 reveal">
+                <h2 class="moul-font text-3xl text-[#B8860B] mb-4 section-title">គម្រោងរូបភាពមង្គល</h2>
+                <p class="text-gray-500">កម្រងរូបភាពអនុស្សាវរីយ៍ Pre-Wedding</p>
+            </div>
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 reveal">
+                <!-- Replace with your actual image paths -->
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic1.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic2.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic3.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic4.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic5.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic6.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic7.jpg"  class="w-full h-full object-cover gallery-img"></div>
+                <div class="overflow-hidden rounded-xl shadow-lg aspect-[3/4]"><img src="img/pic8.jpg"  class="w-full h-full object-cover gallery-img"></div>
+            </div>
+        </section>
+
+
+
+        <!-- 5. Map Section (Updated with QR) -->
+        <section class="py-24 px-6 max-w-4xl mx-auto text-center">
+            <div class="mb-12 reveal">
+                <h2 class="moul-font text-3xl text-[#B8860B] mb-4 section-title">ផែនទីទីតាំងកម្មវិធី</h2>
+                <p class="text-gray-500 mb-8">លោកអ្នកអាចស្កែន QR Code ដើម្បីបើកផែនទីក្នុង Google Maps</p>
+                
+                <div class="bg-white p-6 rounded-[30px] shadow-xl inline-block border-2 border-[#D4AF37] reveal">
+                    <a href="https://maps.app.goo.gl/5L2CxyNhmtQtV23v9" target="_blank"><img src="img/location.png" alt="Location QR" class="w-64 h-64 mb-6"></a>
+                    <p class="moul-font text-[#B8860B]">ស្កែនដើម្បីរកទីតាំង</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 reveal">
+                <a href="https://maps.app.goo.gl/5L2CxyNhmtQtV23v9" target="_blank" class="inline-flex items-center gap-3 bg-[#B8860B] text-white px-10 py-4 rounded-full moul-font hover:bg-[#8B6508] transition-all shadow-xl hover:-translate-y-1">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    ចុចទីនេះដើម្បីបើកផែនទី
+                </a>
+            </div>
+        </section>
+
+        <!-- 6. Digital Gift (Double ABA) -->
+        <section class="py-24 px-6 bg-[#f7f9fc]">
+            <div class="max-w-4xl mx-auto text-center reveal">
+                <h2 class="moul-font text-2xl text-[#B8860B] mb-8 section-title">ចងដៃឌីជីថល (Digital Gift)</h2>
+                <p class="text-gray-500 mb-12">ប្រសិនបើលោកអ្នកមិនបានអញ្ជើញមកចូលរួមផ្ទាល់ លោកអ្នកអាចផ្ញើសារជូនពរ និងការចងដៃតាមរយៈគណនីខាងក្រោម៖</p>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Groom ABA -->
+                    <div class="bg-gradient-to-br from-[#005a8f] to-[#003d63] text-white p-8 rounded-[30px] shadow-2xl relative overflow-hidden aba-glow reveal-left">
+                        <div class="relative z-10">
+                            <p class="text-xs opacity-60 uppercase tracking-[4px] mb-4">Groom's Digital Gift</p>
+                            <div class="bg-white p-3 rounded-2xl mb-4 inline-block shadow-inner">
+                                <img src="img/QR_KH.jpg" alt="Groom ABA QR" class="w-40 h-40">
+                            </div>
+                            <h3 class="text-xl font-bold mb-1">VIRAK RAKSA</h3>
+                            <!-- <p class="text-lg tracking-widest text-[#D4AF37]">000 000 000</p> -->
+                        </div>
+                    </div>
+
+                    <!-- Bride ABA -->
+                    <div class="bg-gradient-to-br from-[#005a8f] to-[#003d63] text-white p-8 rounded-[30px] shadow-2xl relative overflow-hidden aba-glow reveal-right">
+                        <div class="relative z-10">
+                            <p class="text-xs opacity-60 uppercase tracking-[4px] mb-4">Bride's Digital Gift</p>
+                            <div class="bg-white p-3 rounded-2xl mb-4 inline-block shadow-inner">
+                                <img src="img/QR_DL.jpg" alt="Bride ABA QR" class="w-40 h-40">
+                            </div>
+                            <h3 class="text-xl font-bold mb-1">VIRAK RAKSA</h3>
+                            <!-- <p class="text-lg tracking-widest text-[#D4AF37]">001 001 001</p> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Footer -->
+        <footer class="py-24 text-center bg-white border-t border-gray-100 relative">
+            <p class="script-font text-6xl mb-6 text-[#D4AF37]">Thank You</p>
+            <p class="moul-font text-xl text-gray-800 mb-2">ខេមរៈ & រក្សា</p>
+            <p class="text-gray-400 text-sm tracking-[8px] uppercase">July 7, 2026</p>
+            <div class="mt-12 text-xs text-gray-300">
+                &copy; 2026 Digital Invitation | Created by : <a href="https://www.facebook.com/Devidvirak132" target="_blank">VIRAK DEVID</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const audio = document.getElementById('wedding-music');
+        const disk = document.getElementById('music-disk');
+        let isPlaying = false;
+
+        const weddingDate = new Date("July 7, 2026 00:00:00").getTime();
+
+        function updateDaysCounter() {
+            const now = new Date().getTime();
+            const difference = weddingDate - now;
+            let days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            if (days < 0) days = 0;
+            document.getElementById('days-count').innerText = days.toString().padStart(2, '0');
+        }
+
+        function openInvitation() {
+            document.body.classList.add('opened');
+            const content = document.getElementById('content-area');
+            content.style.opacity = '1';
+            document.body.style.overflow = 'auto';
+            updateDaysCounter();
+            audio.play().catch(e => console.log("Audio blocked"));
+            isPlaying = true;
+            disk.classList.add('playing');
+            setInterval(createHeart, 600);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) { audio.pause(); disk.classList.remove('playing'); } 
+            else { audio.play(); disk.classList.add('playing'); }
+            isPlaying = !isPlaying;
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['❤️', '💖', '💍', '🌸'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 4000);
+        }
+
+        const sr = ScrollReveal({ reset: false, mobile: true });
+        sr.reveal('.reveal', { delay: 200, distance: '40px', origin: 'bottom', duration: 1200, interval: 200 });
+        sr.reveal('.reveal-left', { delay: 300, distance: '40px', origin: 'left', duration: 1400 });
+        sr.reveal('.reveal-right', { delay: 300, distance: '40px', origin: 'right', duration: 1400 });
+    </script>
+</body>
+</html>
